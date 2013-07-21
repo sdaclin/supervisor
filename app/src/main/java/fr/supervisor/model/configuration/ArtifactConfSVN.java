@@ -5,5 +5,5 @@ package fr.supervisor.model.configuration;
  * Date: 20/07/13
  * Time: 09:38
  */
-public class ArtifactSVNConf extends ArtifactConf {
+public class ArtifactConfSVN extends ArtifactConf {
 }

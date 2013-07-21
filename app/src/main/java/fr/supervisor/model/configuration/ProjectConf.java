@@ -1,5 +1,7 @@
 package fr.supervisor.model.configuration;
 
+import com.sun.istack.internal.Nullable;
+
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -18,6 +20,11 @@ public class ProjectConf {
     private Path documentation;
 
     /**
+     * Pattern for dir or file to ignore
+     */
+    private Pattern ignoreFile;
+
+    /**
      * SVN URL of the project tag dir
      */
     private URL svn;
@@ -28,7 +35,7 @@ public class ProjectConf {
      *          v1.3
      *          1.0
      */
-    private Pattern versionPattern;
+    private Pattern version;
 
     /**
      * Project's phase configuration
@@ -46,13 +53,18 @@ public class ProjectConf {
             return this;
         }
 
+        public Builder ignore(Pattern ignoreFileOrDirPattern){
+            conf.ignoreFile = ignoreFileOrDirPattern;
+            return this;
+        }
+
         public Builder svn(URL svnUrl){
             conf.svn = svnUrl;
             return this;
         }
 
-        public Builder versionPattern(Pattern versionPattern){
-            conf.versionPattern = versionPattern;
+        public Builder version(Pattern version){
+            conf.version = version;
             return this;
         }
 
@@ -68,8 +80,8 @@ public class ProjectConf {
             if (conf.documentation == null){
                 throw new IllegalStateException("Documentation path must be configured");
             }
-            if (conf.versionPattern == null){
-                throw new IllegalStateException("Version pattern must be configured");
+            if (conf.version == null){
+                throw new IllegalStateException("Version glob must be configured");
             }
             if (conf.phaseConfs.size() == 0){
                 throw new IllegalStateException("A phase must be defined");
@@ -82,11 +94,32 @@ public class ProjectConf {
     public String toString() {
         StringBuilder sb = new StringBuilder("Documentation dir is set to " + documentation + "\n");
         sb.append("SVN path is set to " + svn + "\n");
-        sb.append("Version pattern is set to " + versionPattern + "\n");
+        sb.append("Version pattern is set to " + version + "\n");
         sb.append("Project's phases :\n");
         for (PhaseConf phaseConf : phaseConfs){
             sb.append(phaseConf.toStringTabbed(1));
         }
         return sb.toString();
+    }
+
+    public Path getDocumentation() {
+        return documentation;
+    }
+
+    @Nullable
+    public Pattern getIgnoreFile() {
+        return ignoreFile;
+    }
+
+    public URL getSvn() {
+        return svn;
+    }
+
+    public Pattern getVersion() {
+        return version;
+    }
+
+    public Set<PhaseConf> getPhaseConfs() {
+        return new HashSet<>(phaseConfs);
     }
 }
