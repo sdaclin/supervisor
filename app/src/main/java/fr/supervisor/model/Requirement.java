@@ -1,6 +1,6 @@
 package fr.supervisor.model;
 
-import java.nio.file.Path;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * User: sdaclin
@@ -8,18 +8,48 @@ import java.nio.file.Path;
  * Time: 09:33
  */
 public class Requirement {
+    private String id;
+    // TODO set nullable
+    private String parent;
+    // TODO set nullable
+    private String comment;
+
+    public Requirement(String id){
+        checkNotNull(id, "Id is mandatory");
+        this.id = id;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
     
-    private Path path;
-    
+    @Override
     public String toString(){
         return toStringTabbed(0);
     }
     
      public String toStringTabbed(int level){
-        // 1337 M0D3
         String tabs = new String(new char[level]).replace("\0", "\t");
-        StringBuilder sb = new StringBuilder(tabs).append("Requirement : "+path.getFileName());
+        StringBuilder sb = new StringBuilder(tabs).append(id+"\n"
+                + ((parent!=null) ? "["+parent+"]\n" : "")
+                + ((comment!=null) ? comment : ""));
         return sb.toString();
     }
-    
+
 }
