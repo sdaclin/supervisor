@@ -44,6 +44,14 @@ public class PhaseConf {
         }
     }
 
+    public Pattern getName(){
+        return name;
+    }
+    
+    public Set<ArtifactConf> getArtifactConfs(){
+        return artifactConfs;
+    }
+    
     @Override
     public String toString() {
         return toStringTabbed(0);

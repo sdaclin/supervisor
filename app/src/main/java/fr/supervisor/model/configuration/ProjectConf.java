@@ -1,12 +1,11 @@
 package fr.supervisor.model.configuration;
 
-import com.sun.istack.internal.Nullable;
-
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * User: sdaclin

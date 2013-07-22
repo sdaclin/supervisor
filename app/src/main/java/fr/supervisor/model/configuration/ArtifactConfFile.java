@@ -1,9 +1,8 @@
 package fr.supervisor.model.configuration;
 
-import static com.google.common.base.Preconditions.*;
-import com.sun.istack.internal.Nullable;
 
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * Configuration for an artifact based on a file with a name matching a pattern.
@@ -15,6 +14,10 @@ public class ArtifactConfFile extends ArtifactConf {
     private Pattern requirementPattern;
 
     private ArtifactConfFile(){}
+
+    public Pattern getName() {
+        return fileNamePattern;
+    }
 
     public static class Builder{
         private ArtifactConfFile conf = new ArtifactConfFile();

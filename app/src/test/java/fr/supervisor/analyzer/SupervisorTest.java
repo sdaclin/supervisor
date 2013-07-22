@@ -23,15 +23,21 @@ public class SupervisorTest {
                 .svn(new URL("http://svn.tpas.astek.fr/siclop/tags"))
                 .version(Pattern.compile("(G[\\d]+)(R[\\d]+)*(C[\\d]+)*.*"))
                 .phase(new PhaseConf.Builder()
-                        .name(Pattern.compile("fournitures client"))
+                        .name(Pattern.compile(".*Fournitures.*"))
                         .artifact(new ArtifactConfFile.Builder()
-                                .fileNamePattern(Pattern.compile("\\.docx"))
+                                .fileNamePattern(Pattern.compile(".*\\.doc"))
                                 .build())
                         .build())
                 .phase(new PhaseConf.Builder()
-                        .name(Pattern.compile("conception"))
+                        .name(Pattern.compile(".*Analyse.*"))
                         .artifact(new ArtifactConfFile.Builder()
-                                .fileNamePattern(Pattern.compile("CDS.*DFD\\.docx"))
+                                .fileNamePattern(Pattern.compile(".*\\.doc"))
+                                .build())
+                        .build())
+                .phase(new PhaseConf.Builder()
+                        .name(Pattern.compile(".*Conception.*"))
+                        .artifact(new ArtifactConfFile.Builder()
+                                .fileNamePattern(Pattern.compile(".*\\.doc"))
                                 .build())
                         .build())
                 .build();
@@ -41,5 +47,7 @@ public class SupervisorTest {
 
         Supervisor supervisor = new Supervisor(project);
         supervisor.run();
+        
+        System.out.println(project.toString());
     }
 }
