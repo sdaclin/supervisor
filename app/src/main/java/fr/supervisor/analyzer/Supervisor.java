@@ -33,18 +33,21 @@ public class Supervisor {
             Files.walkFileTree(project.getConf().getDocumentation(),new SimpleFileVisitor<Path>(){
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    // Ignoring directories that match projectConf's ignore pattern
                     if (project.getConf().getIgnoreFile() != null && project.getConf().getIgnoreFile().matcher(dir.toFile().getName()).matches()){
                         return FileVisitResult.SKIP_SUBTREE;
                     }
+                    // Finding version directories
                     if (project.getConf().getVersion().matcher(dir.toFile().getName()).matches()) {
                         versionPaths.add(dir);
                         return FileVisitResult.SKIP_SUBTREE;
                     }
+                    // Exploring deeper
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         if (versionPaths.size()==0){
             logger.info("No version found");
