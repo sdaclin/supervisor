@@ -3,6 +3,7 @@ package fr.supervisor.model.configuration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 /**
  * User: sdaclin
@@ -15,7 +16,9 @@ public class PhaseConf {
      * ex : .*customer artifact.* matches "01 - customer artifact" folder
      */
     private Pattern name;
-
+    
+    private Pattern ignoreFile;
+    
     /**
      * List of configuration matching this phase conf
      */
@@ -35,6 +38,11 @@ public class PhaseConf {
             conf.artifactConfs.add(artifactConf);
             return this;
         }
+        
+        public Builder ignore(Pattern ignore){
+            conf.ignoreFile = ignore;
+            return this;
+        }
 
         public PhaseConf build(){
             if (conf.name == null){
@@ -46,6 +54,10 @@ public class PhaseConf {
 
     public Pattern getName(){
         return name;
+    }
+    @Nullable
+    public Pattern getIgnoreFile() {
+        return ignoreFile;
     }
     
     public Set<ArtifactConf> getArtifactConfs(){

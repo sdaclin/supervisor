@@ -3,10 +3,12 @@ package fr.supervisor.analyzer;
 import fr.supervisor.model.Artifact;
 import fr.supervisor.model.Phase;
 import fr.supervisor.model.Project;
+import fr.supervisor.model.Requirement;
 import fr.supervisor.model.Version;
 import fr.supervisor.model.configuration.ArtifactConf;
 import fr.supervisor.model.configuration.ArtifactConfFile;
 import fr.supervisor.model.configuration.PhaseConf;
+import fr.supervisor.tool.extractor.WordExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +79,16 @@ public class Supervisor {
         
         final List<Path> pathList = new ArrayList<Path>();
         Files.walkFileTree(srcPath,new SimpleFileVisitor<Path>(){
+            
+            //Skip a directory if its name matches toIgnore pattern
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                if (toIgnore != null && toIgnore.matcher(dir.toFile().getName()).matches()){
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+                return FileVisitResult.CONTINUE;
+            }
+            
             @Override
             public FileVisitResult visitFile(final Path file,final BasicFileAttributes attrs) throws IOException {
                 
@@ -111,11 +123,11 @@ public class Supervisor {
         
             for(PhaseConf phaseConf : project.getConf().getPhaseConfs()){
                
-                List<Path> phasePaths = findElements(version.getPath(),phaseConf.getName(),null);
+                List<Path> phasePaths = findElements(version.getPath(),phaseConf.getName(),phaseConf.getIgnoreFile());
                 for(Path path : phasePaths){
                     Phase phase = new Phase(path,phaseConf);
                     version.addPhase(phase);
-                    findArtifactsByPhase(phase);
+                    findArtifactsByPhase(phase, version.getRootRequirement());
                 }
             }
     }
@@ -123,13 +135,22 @@ public class Supervisor {
     /**
      * Search for artificats in each phase directory
      */
-    public void findArtifactsByPhase(Phase phase) throws IOException{
+    public void findArtifactsByPhase(Phase phase, Requirement rootRequirement) throws IOException{
         
         //for each artifact configuration of this phase
         for(ArtifactConf artConf : phase.getConf().getArtifactConfs()){
-            List<Path> artifactsList = findFile(phase.getPath(),((ArtifactConfFile)artConf).getName(),null);
+            
+            ArtifactConfFile currentConf = (ArtifactConfFile)artConf;
+            //find artifacts matching the current config
+            List<Path> artifactsList = findFile(phase.getPath(),currentConf.getName(),currentConf.getIgnoreFile());
+            
+            //for each artifact path, create an artifact and add it to the current phase
             for(Path path : artifactsList){
-                phase.addArtifact(new Artifact(path));
+                Artifact newArtifact = new Artifact(path,artConf);
+                phase.addArtifact(newArtifact);
+                
+                //extract the requirements from this artifact -> Factory 
+                newArtifact.setRequirements(WordExtractor.extractRequirements(currentConf.getRequirementPattern(),currentConf.getStylePattern(), path.toFile(),rootRequirement));
             }
         }
     }
@@ -144,6 +165,10 @@ public class Supervisor {
             }
             else{
                 logger.info("{} version found", project.getVersions().size());           
+            }
+            
+            for(Version version : project.getVersions()){
+                logger.info("Version {} : {}",version.getPath().getFileName(),version.getRootRequirement().toString());
             }
     
         } catch (IOException ex) {

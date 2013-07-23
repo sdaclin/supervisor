@@ -1,5 +1,6 @@
 package fr.supervisor.model;
 
+import fr.supervisor.model.configuration.ArtifactConf;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +14,11 @@ public class Artifact {
     
     private Path path;
     private List<Requirement> requirements;
+    private ArtifactConf conf;
     
-    public Artifact(Path path){
+    public Artifact(Path path, ArtifactConf conf){
         this.path = path;
+        this.conf = conf;
         requirements = new ArrayList<Requirement>();
     }
     
@@ -26,8 +29,16 @@ public class Artifact {
     public Path getPath(){
         return path;
     }
+    
+    public ArtifactConf getConf(){
+        return conf;
+    }
     public void addRequirement(Requirement req){
         requirements.add(req);
+    }
+    
+    public void setRequirements(List<Requirement> requirements){
+        this.requirements = requirements;
     }
     
     @Override

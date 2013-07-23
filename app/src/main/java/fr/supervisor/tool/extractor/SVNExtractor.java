@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  */
 public class SVNExtractor {
 
-    public static Collection<Requirement> extractRequirements(Pattern patternRequirement, URL svnUrl, String user, String pass, int revisionFrom, int revisionTo) {
+    public static Collection<Requirement> extractRequirements(Pattern patternRequirement, URL svnUrl, String user, String pass, int revisionFrom, int revisionTo, Requirement rootRequirement) {
         List<Requirement> requirements = new ArrayList<>();
         SVNRepository repository = null;
         try {
@@ -42,7 +42,17 @@ public class SVNExtractor {
             for (SVNLogEntry log : logEntries){
                 Matcher matcher = patternRequirement.matcher(log.getMessage());
                 if (matcher.find()){
-                    Requirement requirement = new Requirement(matcher.group(0));
+                    Requirement requirement = new Requirement(""+log.getRevision());
+                    
+                    //get the parent requirement
+                    Requirement parentRequirement = rootRequirement.findById(matcher.group(0));
+                    if(parentRequirement != null){
+                        parentRequirement.addChild(requirement);
+                    }else{
+                        //no parent found
+                        rootRequirement.addChild(requirement);
+                    }
+                    
                     requirement.setComment(log.getMessage());
                     requirements.add(requirement);
                 }

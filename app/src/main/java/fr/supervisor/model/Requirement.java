@@ -1,6 +1,8 @@
 package fr.supervisor.model;
 
 import static com.google.common.base.Preconditions.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: sdaclin
@@ -10,23 +12,60 @@ import static com.google.common.base.Preconditions.*;
 public class Requirement {
     private String id;
     // TODO set nullable
-    private String parent;
+    private List<Requirement> children;
     // TODO set nullable
     private String comment;
 
     public Requirement(String id){
         checkNotNull(id, "Id is mandatory");
         this.id = id;
+        this.children = new ArrayList<Requirement>();
     }
 
-    public String getParent() {
-        return parent;
+    public List<Requirement> getChildren() {
+        return children;
     }
 
-    public void setParent(String parent) {
-        this.parent = parent;
+    public void setChildren(List<Requirement> children) {
+        this.children = children;
     }
-
+    
+    public void addChild(Requirement child){
+        children.add(child);
+    }
+    
+    /**
+     * Fonction recursive de recherche de requirements
+     * @param id id du requirement a trouver
+     * @return le requirement voulu
+     */
+    public Requirement findById(String id){
+        
+        if(this.id.equalsIgnoreCase(id))
+            return this;
+        
+        for(Requirement requirement : children){
+            return requirement.findById(id);
+        }
+        
+        return null;
+    }
+    
+    public List<Requirement> getAllChildren(){
+        List<Requirement> requirements = new ArrayList<Requirement>();
+        for(Requirement child : children){
+            child.getAll(requirements);
+        }
+        return requirements;
+    }
+    
+    private void getAll(List<Requirement> listReqs){
+        listReqs.add(this);
+        for(Requirement child : children){
+            child.getAll(listReqs);
+        }   
+    }
+    
     public String getComment() {
         return comment;
     }
@@ -34,7 +73,10 @@ public class Requirement {
     public void setComment(String comment) {
         this.comment = comment;
     }
-
+    
+    public String getId(){
+        return id;
+    }
     public void setId(String id) {
         this.id = id;
     }
@@ -44,12 +86,14 @@ public class Requirement {
         return toStringTabbed(0);
     }
     
-     public String toStringTabbed(int level){
-        String tabs = new String(new char[level]).replace("\0", "\t");
-        StringBuilder sb = new StringBuilder(tabs).append(id+"\n"
-                + ((parent!=null) ? "["+parent+"]\n" : "")
-                + ((comment!=null) ? comment : ""));
-        return sb.toString();
-    }
+    public String toStringTabbed(int level){
+       String tabs = new String(new char[level]).replace("\0", "\t");
+       StringBuilder sb = new StringBuilder(tabs).append(id+"\n"
+               + tabs+((comment!=null) ? comment : ""));
+       for(Requirement requirement : children){
+           sb.append("\n"+requirement.toStringTabbed(level+1));
+       }
+       return sb.toString();
+   }
 
 }

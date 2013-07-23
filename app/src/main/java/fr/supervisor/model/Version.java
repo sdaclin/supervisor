@@ -13,12 +13,17 @@ public class Version {
     
     private Path path;
     private List<Phase> phases;
+    private Requirement rootRequirement;
     
     public Version(Path p){
         path = p;
         phases = new ArrayList<Phase>();
+        rootRequirement = new Requirement("ROOT");
     }
     
+    public Requirement getRootRequirement(){
+        return rootRequirement;
+    }
     
     public Path getPath(){
         return path;

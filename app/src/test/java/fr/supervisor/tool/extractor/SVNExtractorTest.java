@@ -16,9 +16,11 @@ public class SVNExtractorTest {
     @Test
     public void extractRequirement(){
         try {
-            for (Requirement requirement : SVNExtractor.extractRequirements(Pattern.compile("^DM\\s*[\\d]*|^G[\\d]R*[\\d]*C*[\\d]*|^IRMA\\s*[\\d]*"), new URL("http://svn.tpas.astek.fr/siclop/tags/G4R9C1"), "sonar", "sonar", 0, -1)) {
+            Requirement newRequirement = new Requirement("root");
+            for (Requirement requirement : SVNExtractor.extractRequirements(Pattern.compile("^DM\\s*[\\d]*|^G[\\d]R*[\\d]*C*[\\d]*|^IRMA\\s*[\\d]*"), new URL("http://svn.tpas.astek.fr/siclop/tags/G4R9C1"), "sonar", "sonar", 0, -1, newRequirement)) {
                 System.out.println(requirement);
             }
+            System.out.println("TREE-STRUCTURE"+newRequirement);
         } catch (MalformedURLException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

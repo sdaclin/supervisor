@@ -3,6 +3,7 @@ package fr.supervisor.model.configuration;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -40,7 +41,7 @@ public class ProjectConf {
      * Project's phase configuration
      * Order is set by builder
      */
-    private Set<PhaseConf> phaseConfs = new HashSet<>();
+    private Set<PhaseConf> phaseConfs = new LinkedHashSet<>();
 
     private ProjectConf(){}
 
@@ -119,6 +120,6 @@ public class ProjectConf {
     }
 
     public Set<PhaseConf> getPhaseConfs() {
-        return new HashSet<>(phaseConfs);
+        return new LinkedHashSet<>(phaseConfs);
     }
 }
