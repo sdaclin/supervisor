@@ -42,22 +42,22 @@ public class SVNExtractor {
             for (SVNLogEntry log : logEntries){
                 Matcher matcher = patternRequirement.matcher(log.getMessage());
                 if (matcher.find()){
-                    Requirement requirement = new Requirement(""+log.getRevision());
                     
-                    //get the parent requirement
-                    Requirement parentRequirement = rootRequirement.findById(matcher.group(0));
-                    if(parentRequirement != null){
-                        parentRequirement.addChild(requirement);
-                    }else{
-                        //no parent found
+                    Requirement requirement = new Requirement(""+log.getRevision());
+
+                    Requirement parent = rootRequirement.findById(matcher.group(0).trim());
+                    if(parent != null){
+                        parent.addChild(requirement);
+                    }
+                    else{
                         rootRequirement.addChild(requirement);
                     }
-                    
                     requirement.setComment(log.getMessage());
+                   
                     requirements.add(requirement);
                 }
             }
-            System.out.println("logEntries = " + logEntries);
+            //System.out.println("logEntries = " + logEntries);
 
         } catch (SVNException svne) {
             svne.printStackTrace();

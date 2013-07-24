@@ -28,6 +28,11 @@ public class Version {
     public Path getPath(){
         return path;
     }
+    
+    public String getVersion(){
+        return path.getFileName().toString();
+    }
+    
     public void setPath(Path p ){
         path = p;
     }

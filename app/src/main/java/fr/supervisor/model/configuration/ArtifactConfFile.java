@@ -9,6 +9,9 @@ import javax.annotation.Nullable;
  * The Artifact can contain some requirements
  */
 public class ArtifactConfFile extends ArtifactConf {
+    
+    private Pattern directoryPattern;
+    
     private Pattern fileNamePattern;
     @Nullable
     private Pattern requirementPattern;
@@ -25,6 +28,11 @@ public class ArtifactConfFile extends ArtifactConf {
 
     public static class Builder{
         private ArtifactConfFile conf = new ArtifactConfFile();
+        
+        public Builder directoryPattern(Pattern directoryPattern){
+            conf.directoryPattern = directoryPattern;
+            return this;
+        }
 
         public Builder fileNamePattern(Pattern fileName){
             conf.fileNamePattern = fileName;
@@ -53,6 +61,11 @@ public class ArtifactConfFile extends ArtifactConf {
             return conf;
         }
     }
+    
+    public Pattern getDirectoryPattern(){
+        return directoryPattern;
+    }
+    
     public Pattern getRequirementPattern(){
         return requirementPattern;
     }
@@ -77,7 +90,7 @@ public class ArtifactConfFile extends ArtifactConf {
 
         StringBuilder sb =
             new StringBuilder(tabs)
-                    .append("Document pattern is set to " + fileNamePattern + "\n");
+                    .append("Directory pattern is set to : "+directoryPattern+"\nDocument pattern is set to " + fileNamePattern + "\n");
 
         if (requirementPattern != null){
             sb.append(tabs).append("No requirements will be searched\n");

@@ -7,7 +7,9 @@ import fr.supervisor.model.Requirement;
 import fr.supervisor.model.Version;
 import fr.supervisor.model.configuration.ArtifactConf;
 import fr.supervisor.model.configuration.ArtifactConfFile;
+import fr.supervisor.model.configuration.ArtifactConfSVN;
 import fr.supervisor.model.configuration.PhaseConf;
+import fr.supervisor.tool.extractor.SVNExtractor;
 import fr.supervisor.tool.extractor.WordExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,41 +118,63 @@ public class Supervisor {
     }
     
     
-    /**
-     * Search for phase directories inside the already found version directories
-     */
+
     public void findPhasesByVersion(Version version) throws IOException{
         
             for(PhaseConf phaseConf : project.getConf().getPhaseConfs()){
-               
-                List<Path> phasePaths = findElements(version.getPath(),phaseConf.getName(),phaseConf.getIgnoreFile());
-                for(Path path : phasePaths){
-                    Phase phase = new Phase(path,phaseConf);
-                    version.addPhase(phase);
-                    findArtifactsByPhase(phase, version.getRootRequirement());
-                }
+                
+                Phase phase = new Phase(phaseConf.getName(),phaseConf);
+                version.addPhase(phase);
+                findArtifactsByPhase(phase,version);
             }
     }
-
+   
     /**
-     * Search for artificats in each phase directory
+     * Search for artificats in each version directory if the artifact is a File Artifact
+     * Otherwise, start the svn extractor for this phase
      */
-    public void findArtifactsByPhase(Phase phase, Requirement rootRequirement) throws IOException{
+    
+    public void findArtifactsByPhase(Phase phase,Version version) throws IOException{
         
         //for each artifact configuration of this phase
         for(ArtifactConf artConf : phase.getConf().getArtifactConfs()){
-            
-            ArtifactConfFile currentConf = (ArtifactConfFile)artConf;
-            //find artifacts matching the current config
-            List<Path> artifactsList = findFile(phase.getPath(),currentConf.getName(),currentConf.getIgnoreFile());
-            
-            //for each artifact path, create an artifact and add it to the current phase
-            for(Path path : artifactsList){
-                Artifact newArtifact = new Artifact(path,artConf);
-                phase.addArtifact(newArtifact);
+           
+            if(artConf instanceof ArtifactConfFile){
                 
-                //extract the requirements from this artifact -> Factory 
-                newArtifact.setRequirements(WordExtractor.extractRequirements(currentConf.getRequirementPattern(),currentConf.getStylePattern(), path.toFile(),rootRequirement));
+                ArtifactConfFile currentConf = (ArtifactConfFile)artConf;
+                
+                //find directories that match the directory pattern for the artifacts
+                List<Path> directoryPaths = findElements(version.getPath(),currentConf.getDirectoryPattern(),currentConf.getIgnoreFile());
+                
+                for(Path directoryPath : directoryPaths){
+                    
+                    //find artifacts in the current directory
+                    List<Path> artifactsList = findFile(directoryPath,currentConf.getName(),currentConf.getIgnoreFile());
+
+                    //for each artifact found, create an artifact and add it to the current phase
+                    for(Path artifactPath : artifactsList){
+                        Artifact newArtifact = new Artifact(artifactPath,artConf);
+                        phase.addArtifact(newArtifact);
+                        //extract the requirements from this artifact
+                        newArtifact.setRequirements(WordExtractor.extractRequirements(currentConf.getRequirementPattern(),currentConf.getStylePattern(), artifactPath.toFile(),version.getRootRequirement()));
+                    }
+                }
+            }
+            else if(artConf instanceof ArtifactConfSVN){
+                
+                //the configuration indicates a SVN artifact
+                ArtifactConfSVN currentConf = (ArtifactConfSVN)artConf;
+                Artifact svnArtifact = new Artifact(Paths.get(currentConf.getUrl().getPath()),currentConf);
+                
+                //compute the correct pattern, including the current version
+                Pattern svnReqPattern = Pattern.compile(currentConf.getRequirementPattern().pattern().replace("(version)",version.getVersion()));
+                
+                //extract requirements from the svn commit log
+                svnArtifact.setRequirements((List<Requirement>)SVNExtractor.extractRequirements(svnReqPattern, currentConf.getUrl(), currentConf.getUser(), currentConf.getPassword(), 0, -1, version.getRootRequirement()));
+                phase.addArtifact(svnArtifact);
+            }
+            else{
+                throw new IllegalStateException("L'artifact ne correspond a aucun type connu");
             }
         }
     }

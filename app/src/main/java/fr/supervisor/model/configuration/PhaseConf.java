@@ -11,14 +11,9 @@ import javax.annotation.Nullable;
  * Time: 09:37
  */
 public class PhaseConf {
-    /**
-     * Pattern representing name of the phase to discover in document repository
-     * ex : .*customer artifact.* matches "01 - customer artifact" folder
-     */
-    private Pattern name;
-    
-    private Pattern ignoreFile;
-    
+  
+    private String name;
+   
     /**
      * List of configuration matching this phase conf
      */
@@ -29,7 +24,7 @@ public class PhaseConf {
     public static class Builder {
         private PhaseConf conf = new PhaseConf();
 
-        public Builder name(Pattern name){
+        public Builder name(String name){
             conf.name = name;
             return this;
         }
@@ -39,31 +34,25 @@ public class PhaseConf {
             return this;
         }
         
-        public Builder ignore(Pattern ignore){
-            conf.ignoreFile = ignore;
-            return this;
-        }
 
         public PhaseConf build(){
             if (conf.name == null){
-                throw new IllegalStateException("Name pattern must be set");
+                throw new IllegalStateException("Name  must be set");
             }
             return conf;
         }
     }
 
-    public Pattern getName(){
+    public String getName(){
         return name;
     }
-    @Nullable
-    public Pattern getIgnoreFile() {
-        return ignoreFile;
-    }
+   
     
     public Set<ArtifactConf> getArtifactConfs(){
         return artifactConfs;
     }
     
+
     @Override
     public String toString() {
         return toStringTabbed(0);
@@ -73,7 +62,7 @@ public class PhaseConf {
         // 1337 M0D3
         String tabs = new String(new char[level]).replace("\0", "\t");
 
-        StringBuilder sb = new StringBuilder(tabs).append("Phase name pattern is set to " + name + "\n");
+        StringBuilder sb = new StringBuilder(tabs).append("Phase name is set to " + name + "\n");
         sb.append(tabs).append("Artifact conf phases :\n");
         for (ArtifactConf artifactConf : artifactConfs){
             sb.append(artifactConf.toStringTabbed(level+1));

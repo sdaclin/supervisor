@@ -1,5 +1,6 @@
 package fr.supervisor.model;
 
+import fr.supervisor.model.configuration.ArtifactConfSVN;
 import fr.supervisor.model.configuration.PhaseConf;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,12 +13,12 @@ import java.util.List;
  */
 public class Phase {
     
-    private Path path;
+    private String name;
     private PhaseConf conf;
     private List<Artifact> artifacts;
     
-    public Phase(Path path, PhaseConf conf){
-        this.path = path;
+    public Phase(String name, PhaseConf conf){
+        this.name = name;
         this.conf = conf;
         artifacts = new ArrayList<Artifact>();
     }
@@ -26,12 +27,12 @@ public class Phase {
         return conf;
     }
     
-    public Path getPath(){
-        return path;
+    public String getName(){
+        return name;
     }
     
-    public void setPath(Path path){
-        this.path = path;
+    public void setName(String name){
+        this.name = name;
     }
     
     public void addArtifact(Artifact artifact){
@@ -44,7 +45,7 @@ public class Phase {
      public String toStringTabbed(int level){
         // 1337 M0D3
         String tabs = new String(new char[level]).replace("\0", "\t");
-        StringBuilder sb = new StringBuilder(tabs).append("Phase : "+path.getFileName());
+        StringBuilder sb = new StringBuilder(tabs).append("Phase : "+name);
         
         if(artifacts.isEmpty()){
              sb.append("\n \t"+tabs+"Aucun artefact");

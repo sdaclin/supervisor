@@ -45,7 +45,9 @@ public class Requirement {
             return this;
         
         for(Requirement requirement : children){
-            return requirement.findById(id);
+             Requirement req = requirement.findById(id);
+             if(req != null)
+                 return req;
         }
         
         return null;
