@@ -2,14 +2,6 @@ package fr.supervisor.tool.extractor;
 
 
 import fr.supervisor.model.Requirement;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.sax.BodyContentHandler;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,19 +21,6 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
  * Time: 14:58
  */
 public class WordExtractor {
-    public static void extractSection(File file){
-        try (InputStream is = new FileInputStream(file)) {
-            ParseContext context = new ParseContext();
-            Metadata metadata = new Metadata();
-            ContentHandler handler = new BodyContentHandler(System.out);
-
-            Parser parser = new AutoDetectParser();
-            parser.parse(is,handler,metadata,context);
-            System.out.println("Contenu  : "+handler.toString());
-        } catch (IOException |SAXException | TikaException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
     
     /**
      * Extracts requirements from a docx file. Maintain a tree-like structure of requirements whose root element is rootRequirement
