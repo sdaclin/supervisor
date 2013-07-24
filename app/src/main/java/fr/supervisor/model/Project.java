@@ -17,10 +17,10 @@ import java.util.TreeMap;
 public class Project {
     private String name;
     private ProjectConf conf;
-    
+
     /**
      * versions =
-     *      "G4R3" -> 
+     *      "G4R3" ->
      *          2005/02/25 ->
      *              Version G4R3 (analysée le 25)
      *          2005/02/26 ->
@@ -39,13 +39,13 @@ public class Project {
     public ProjectConf getConf(){
         return conf;
     }
-    
+
     public void addVersion(Version version, Date dateVersion){
         Map<Date,Version> map = new HashMap<Date,Version>();
         map.put(dateVersion, version);
         versions.put(version.getPath().getFileName().toString(),map);
     }
-    
+
     /*
      * Return the list of versions
      */
@@ -56,25 +56,25 @@ public class Project {
         }
         return list;
     }
-    
+
     @Override
     public String toString(){
-        
-        StringBuilder result = new StringBuilder(this.name); 
+
+        StringBuilder result = new StringBuilder(this.name);
         for(String nomVersion : versions.keySet()){
             result.append("\n\t" + nomVersion);
-            
+
             Map<Date,Version> currentMap = versions.get(nomVersion);
             for(Date dateVersion : currentMap.keySet()){
                 result.append("\n\t\t"+dateVersion);
                 //print the version
-                result.append(currentMap.get(dateVersion).toStringTabbed(3));
-                
+                result.append(currentMap.get(dateVersion).toStringTabbed(2));
+
             }
         }
         return result.toString();
     }
-        
-        
-    
+
+
+
 }

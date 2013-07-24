@@ -37,19 +37,19 @@ public class Supervisor {
     public Supervisor(Project project){
         this.project = project;
     }
-    
-  
+
+
     /**
      * Retrieve elements (version, phase...)in the directory (at any depth) indicated by srcPath, with name matching the pattern toMatch
      * And excluding files that match toIgnore
-     * @param srcPath starting directory for this search 
+     * @param srcPath starting directory for this search
      * @param toMatch pattern to select elements
      * @param toIgnore pattern to exclude elements
      * @return a Path list
-     * @throws IOException 
+     * @throws IOException
      */
     public List<Path> findElements(Path srcPath, final Pattern toMatch, final Pattern toIgnore) throws IOException {
-        
+
         final List<Path> pathList = new ArrayList<Path>();
         Files.walkFileTree(srcPath,new SimpleFileVisitor<Path>(){
             @Override
@@ -58,30 +58,30 @@ public class Supervisor {
                     return FileVisitResult.SKIP_SUBTREE;
                 }
                 if (toMatch.matcher(dir.toFile().getName()).matches()) {
-                    
+
                     pathList.add(dir);
                     return FileVisitResult.SKIP_SUBTREE;
                 }
                 return FileVisitResult.CONTINUE;
             }
         });
-        
+
         return pathList;
     }
-    
+
     /**
      * Search files
      * @param srcPath starting directory
      * @param toMatch pattern to select elements
      * @param toIgnore pattern to reject elements
      * @return a Path list
-     * @throws IOException 
+     * @throws IOException
      */
     public List<Path> findFile(Path srcPath,final Pattern toMatch, final Pattern toIgnore) throws IOException {
-        
+
         final List<Path> pathList = new ArrayList<Path>();
         Files.walkFileTree(srcPath,new SimpleFileVisitor<Path>(){
-            
+
             //Skip a directory if its name matches toIgnore pattern
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -90,64 +90,64 @@ public class Supervisor {
                 }
                 return FileVisitResult.CONTINUE;
             }
-            
+
             @Override
             public FileVisitResult visitFile(final Path file,final BasicFileAttributes attrs) throws IOException {
-                
+
                 final String nom = file.getFileName().toString();
                 //ignore hidden files
                 if( ! file.toFile().isHidden() && toMatch.matcher(nom).matches())
                     pathList.add(file);
                 return FileVisitResult.CONTINUE;
             }
-        }); 
+        });
         return pathList;
     }
     /*
-     * Search for version directories 
+     * Search for version directories
      */
     public void findVersions() throws IOException{
 
            List<Path> versionPaths =  findElements(project.getConf().getDocumentation(),project.getConf().getVersion(),project.getConf().getIgnoreFile());
-           for(Path path : versionPaths){     
+           for(Path path : versionPaths){
                Version version = new Version(path);
                project.addVersion(version,new Date());
                //find phases for the current version
                findPhasesByVersion(version);
-           }  
+           }
     }
-    
-    
+
+
 
     public void findPhasesByVersion(Version version) throws IOException{
-        
+
             for(PhaseConf phaseConf : project.getConf().getPhaseConfs()){
-                
+
                 Phase phase = new Phase(phaseConf.getName(),phaseConf);
                 version.addPhase(phase);
                 findArtifactsByPhase(phase,version);
             }
     }
-   
+
     /**
      * Search for artificats in each version directory if the artifact is a File Artifact
      * Otherwise, start the svn extractor for this phase
      */
-    
+
     public void findArtifactsByPhase(Phase phase,Version version) throws IOException{
-        
+
         //for each artifact configuration of this phase
         for(ArtifactConf artConf : phase.getConf().getArtifactConfs()){
-           
+
             if(artConf instanceof ArtifactConfFile){
-                
+
                 ArtifactConfFile currentConf = (ArtifactConfFile)artConf;
-                
+
                 //find directories that match the directory pattern for the artifacts
                 List<Path> directoryPaths = findElements(version.getPath(),currentConf.getDirectoryPattern(),currentConf.getIgnoreFile());
-                
+
                 for(Path directoryPath : directoryPaths){
-                    
+
                     //find artifacts in the current directory
                     List<Path> artifactsList = findFile(directoryPath,currentConf.getName(),currentConf.getIgnoreFile());
 
@@ -155,20 +155,22 @@ public class Supervisor {
                     for(Path artifactPath : artifactsList){
                         Artifact newArtifact = new Artifact(artifactPath,artConf);
                         phase.addArtifact(newArtifact);
-                        //extract the requirements from this artifact
-                        newArtifact.setRequirements(WordExtractor.extractRequirements(currentConf.getRequirementPattern(),currentConf.getStylePattern(), artifactPath.toFile(),version.getRootRequirement()));
+                        //extract the requirements from this artifact if the pattern is set
+                        if (currentConf.getRequirementPattern() != null){
+                            newArtifact.setRequirements(WordExtractor.extractRequirements(currentConf.getRequirementPattern(),currentConf.getStylePattern(), artifactPath.toFile(),version.getRootRequirement()));
+                        }
                     }
                 }
             }
             else if(artConf instanceof ArtifactConfSVN){
-                
+
                 //the configuration indicates a SVN artifact
                 ArtifactConfSVN currentConf = (ArtifactConfSVN)artConf;
                 Artifact svnArtifact = new Artifact(Paths.get(currentConf.getUrl().getPath()),currentConf);
-                
+
                 //compute the correct pattern, including the current version
                 Pattern svnReqPattern = Pattern.compile(currentConf.getRequirementPattern().pattern().replace("(version)",version.getVersion()));
-                
+
                 //extract requirements from the svn commit log
                 svnArtifact.setRequirements((List<Requirement>)SVNExtractor.extractRequirements(svnReqPattern, currentConf.getUrl(), currentConf.getUser(), currentConf.getPassword(), 0, -1, version.getRootRequirement()));
                 phase.addArtifact(svnArtifact);
@@ -178,7 +180,7 @@ public class Supervisor {
             }
         }
     }
-    
+
     public void run(){
         // Search for version directories according projectConf version pattern and ignoring projectConf ignoreFile
         try {
@@ -188,13 +190,13 @@ public class Supervisor {
                 return;
             }
             else{
-                logger.info("{} version found", project.getVersions().size());           
+                logger.info("{} version found", project.getVersions().size());
             }
-            
+
             for(Version version : project.getVersions()){
                 logger.info("Version {} : {}",version.getPath().getFileName(),version.getRootRequirement().toString());
             }
-    
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
