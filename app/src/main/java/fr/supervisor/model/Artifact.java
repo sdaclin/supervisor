@@ -12,18 +12,23 @@ import java.util.List;
  */
 public class Artifact {
     
-    private Path path;
+    private transient Path path;
+    
+    //As path won't be serialized, store the artifact name 
+    private String name;
     private List<Requirement> requirements;
-    private ArtifactConf conf;
+    private transient ArtifactConf conf;
     
     public Artifact(Path path, ArtifactConf conf){
         this.path = path;
+        this.name=this.path.getFileName().toString();
         this.conf = conf;
         requirements = new ArrayList<Requirement>();
     }
     
     public void setPath(Path path){
         this.path = path;
+        this.name=this.path.getFileName().toString();
     }
     
     public Path getPath(){

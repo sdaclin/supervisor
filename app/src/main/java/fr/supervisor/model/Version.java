@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Version {
     
-    private Path path;
+    private transient Path path;
     private List<Phase> phases;
     private Requirement rootRequirement;
     

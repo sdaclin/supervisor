@@ -16,7 +16,7 @@ import java.util.TreeMap;
  */
 public class Project {
     private String name;
-    private ProjectConf conf;
+    private transient ProjectConf conf;
     
     /**
      * versions =
@@ -30,6 +30,7 @@ public class Project {
      *              Version G4R4 (analysée le 25)
      */
     private Map<String,Map<Date,Version>> versions = new TreeMap<String,Map<Date,Version>>();
+
 
     public Project(String name, ProjectConf conf){
         this.name = name;

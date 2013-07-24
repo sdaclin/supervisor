@@ -14,7 +14,7 @@ import java.util.List;
 public class Phase {
     
     private String name;
-    private PhaseConf conf;
+    private transient PhaseConf conf;
     private List<Artifact> artifacts;
     
     public Phase(String name, PhaseConf conf){

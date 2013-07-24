@@ -20,9 +20,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import serializer.ProjectSerializer;
 
 /**
  * User: sdaclin
@@ -181,7 +180,7 @@ public class Supervisor {
     
     public void run(){
         // Search for version directories according projectConf version pattern and ignoring projectConf ignoreFile
-        try {
+        try {         
             findVersions();
             if (project.getVersions().size()==0){
                 logger.info("No version found");
@@ -191,9 +190,11 @@ public class Supervisor {
                 logger.info("{} version found", project.getVersions().size());           
             }
             
+            //display the requirement tree for each version found
             for(Version version : project.getVersions()){
                 logger.info("Version {} : {}",version.getPath().getFileName(),version.getRootRequirement().toString());
             }
+            ProjectSerializer.saveProject("D://test_siclop.json",project);
     
         } catch (IOException ex) {
             ex.printStackTrace();
