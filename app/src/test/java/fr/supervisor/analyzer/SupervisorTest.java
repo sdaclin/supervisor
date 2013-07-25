@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
+import serializer.ProjectSerializer;
 
 /**
  * User: sdaclin
@@ -83,5 +84,7 @@ public class SupervisorTest {
         supervisor.run();
         
         System.out.println(project.toString());
+        //Save the project as a json file
+        ProjectSerializer.saveProject("D://test_siclop.json",project);
     }
 }

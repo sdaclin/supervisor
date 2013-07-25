@@ -17,14 +17,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
-import serializer.ProjectSerializer;
 
 /**
  * User: sdaclin
@@ -113,11 +109,7 @@ public class Supervisor {
            List<Path> versionPaths =  findElements(project.getConf().getDocumentation(),project.getConf().getVersion(),project.getConf().getIgnoreFile());
            for(Path path : versionPaths){
                Version version = new Version(path);
-               project.addVersion(version,new Date()/*{
-                   public String toString() {                      
-                           return this.toString();                 
-                   }
-               }*/);
+               project.addVersion(version,new Date());
                //find phases for the current version
                findPhasesByVersion(version);
            }
@@ -191,7 +183,7 @@ public class Supervisor {
         // Search for version directories according projectConf version pattern and ignoring projectConf ignoreFile
         try {         
             findVersions();
-            if (project.getVersions().size()==0){
+            if (project.getVersions().isEmpty()){
                 logger.info("No version found");
                 return;
             }
@@ -202,7 +194,7 @@ public class Supervisor {
             for(Version version : project.getVersions()){
                 logger.info("Version {} : {}",version.getPath().getFileName(),version.getRootRequirement().toString());
             }
-
+               
         } catch (IOException ex) {
             ex.printStackTrace();
         }
