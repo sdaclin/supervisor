@@ -142,12 +142,12 @@ public class Supervisor {
                 ArtifactConfFile currentConf = (ArtifactConfFile)artConf;
 
                 //find directories that match the directory pattern for the artifacts
-                List<Path> directoryPaths = findElements(version.getPath(),currentConf.getDirectoryPattern(),currentConf.getIgnoreFile());
+                List<Path> directoryPaths = findElements(version.getPath(),currentConf.getDirectoryPattern(),project.getConf().getIgnoreFile());
 
                 for(Path directoryPath : directoryPaths){
 
                     //find artifacts in the current directory
-                    List<Path> artifactsList = findFile(directoryPath,currentConf.getName(),currentConf.getIgnoreFile());
+                    List<Path> artifactsList = findFile(directoryPath,currentConf.getName(),project.getConf().getIgnoreFile());
 
                     //for each artifact found, create an artifact and add it to the current phase
                     for(Path artifactPath : artifactsList){
@@ -155,6 +155,10 @@ public class Supervisor {
                         phase.addArtifact(newArtifact);
                         //extract the requirements from this artifact if the pattern is set
                         if (currentConf.getRequirementPattern() != null){
+                            if (! artifactPath.toFile().getName().endsWith("docx")){
+                                logger.warn("Un pattern est défini pour trouver des Requirements dans l'artifact {} mais celui-ci n'est pas au format docx", artifactPath);
+                                continue;
+                            }
                             newArtifact.setRequirements(WordExtractor.extractRequirements(currentConf.getRequirementPattern(),currentConf.getStylePattern(), artifactPath.toFile(),version.getRootRequirement()));
                         }
                     }
@@ -181,7 +185,7 @@ public class Supervisor {
 
     public void run(){
         // Search for version directories according projectConf version pattern and ignoring projectConf ignoreFile
-        try {         
+        try {
             findVersions();
             if (project.getVersions().isEmpty()){
                 logger.info("No version found");
@@ -194,7 +198,7 @@ public class Supervisor {
             for(Version version : project.getVersions()){
                 logger.info("Version {} : {}",version.getPath().getFileName(),version.getRootRequirement().toString());
             }
-               
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
