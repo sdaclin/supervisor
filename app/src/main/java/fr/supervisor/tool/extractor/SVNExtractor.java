@@ -42,8 +42,9 @@ public class SVNExtractor {
             for (SVNLogEntry log : logEntries){
                 Matcher matcher = patternRequirement.matcher(log.getMessage());
                 if (matcher.find()){
-                    
+
                     Requirement requirement = new Requirement(""+log.getRevision());
+                    requirement.setComment(log.getMessage()+"\n"+log.getChangedPaths().toString());
 
                     Requirement parent = rootRequirement.findById(matcher.group(0).trim());
                     if(parent != null){
@@ -52,8 +53,7 @@ public class SVNExtractor {
                     else{
                         rootRequirement.addChild(requirement);
                     }
-                    requirement.setComment(log.getMessage());
-                   
+
                     requirements.add(requirement);
                 }
             }

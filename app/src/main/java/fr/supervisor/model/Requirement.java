@@ -29,30 +29,30 @@ public class Requirement {
     public void setChildren(List<Requirement> children) {
         this.children = children;
     }
-    
+
     public void addChild(Requirement child){
         children.add(child);
     }
-    
+
     /**
      * Fonction recursive de recherche de requirements
      * @param id id du requirement a trouver
      * @return le requirement voulu
      */
     public Requirement findById(String id){
-        
+
         if(this.id.equalsIgnoreCase(id))
             return this;
-        
+
         for(Requirement requirement : children){
              Requirement req = requirement.findById(id);
              if(req != null)
                  return req;
         }
-        
+
         return null;
     }
-    
+
     public List<Requirement> getAllChildren(){
         List<Requirement> requirements = new ArrayList<Requirement>();
         for(Requirement child : children){
@@ -60,14 +60,14 @@ public class Requirement {
         }
         return requirements;
     }
-    
+
     private void getAll(List<Requirement> listReqs){
         listReqs.add(this);
         for(Requirement child : children){
             child.getAll(listReqs);
-        }   
+        }
     }
-    
+
     public String getComment() {
         return comment;
     }
@@ -75,23 +75,22 @@ public class Requirement {
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     public String getId(){
         return id;
     }
     public void setId(String id) {
         this.id = id;
     }
-    
+
     @Override
     public String toString(){
         return toStringTabbed(0);
     }
-    
+
     public String toStringTabbed(int level){
        String tabs = new String(new char[level]).replace("\0", "\t");
-       StringBuilder sb = new StringBuilder(tabs).append(id+"\n"
-               + tabs+((comment!=null) ? comment : ""));
+       StringBuilder sb = new StringBuilder(tabs).append("["+id+"] " + ((comment!=null) ? comment.replaceAll("\\n"," ") : ""));
        for(Requirement requirement : children){
            sb.append("\n"+requirement.toStringTabbed(level+1));
        }
