@@ -84,7 +84,7 @@ public class SupervisorTest {
         supervisor.run();
         
         System.out.println(project.toString());
-        //Save the project as a json file
+        //Save the project as a json file 
         ProjectSerializer.saveProject("D://test_siclop.json",project);
     }
 }
