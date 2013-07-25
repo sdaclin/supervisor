@@ -30,13 +30,16 @@ public class Project {
      *              Version G4R4 (analysée le 25)
      */
     private Map<String,Map<Date,Version>> versions = new TreeMap<String,Map<Date,Version>>();
-
+    
 
     public Project(String name, ProjectConf conf){
         this.name = name;
         this.conf = conf;
     }
-
+    
+    public String getName(){
+        return name;
+    }
     public ProjectConf getConf(){
         return conf;
     }
@@ -47,6 +50,9 @@ public class Project {
         versions.put(version.getPath().getFileName().toString(),map);
     }
     
+    public Map<String,Map<Date,Version>> getRawVersions(){
+        return versions;
+    }
     /*
      * Return the list of versions
      */

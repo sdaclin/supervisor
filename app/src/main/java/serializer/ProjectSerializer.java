@@ -5,7 +5,11 @@
 package serializer;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import fr.supervisor.model.Project;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.logging.Level;
@@ -16,6 +20,10 @@ import java.util.logging.Logger;
  */
 public class ProjectSerializer {
     
+    //enable Complex Map Key serialization in order to serialize the treemap that stores versions correctly : map keys won't be serialized through their toString value
+    //->In fact, Dates will be serialized as defined in setDateFormat
+    private static Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").enableComplexMapKeySerialization().create();
+    
     /**
      * Save a project as a json file
      * @param filePath path to the destination file
@@ -24,7 +32,6 @@ public class ProjectSerializer {
     public static void saveProject(String filePath,Project p) {
         FileWriter fw = null;
         try {
-            Gson gson = new Gson();
             String jsonProject = gson.toJson(p);
             fw = new FileWriter(filePath);
             fw.append(jsonProject);
@@ -50,9 +57,8 @@ public class ProjectSerializer {
         Project loadedProject = null;
         try {
             fr = new FileReader(filePath);
-            Gson gson = new Gson();
             loadedProject = gson.fromJson(fr,Project.class);
-        } catch(Exception ex){
+        } catch(FileNotFoundException | JsonSyntaxException | JsonIOException ex){
              Logger.getLogger(ProjectSerializer.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             try{

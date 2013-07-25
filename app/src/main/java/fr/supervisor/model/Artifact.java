@@ -55,7 +55,7 @@ public class Artifact {
         // 1337 M0D3
         String tabs = new String(new char[level]).replace("\0", "\t");
 
-        StringBuilder sb = new StringBuilder(tabs).append("Artifact : "+path.getFileName());
+        StringBuilder sb = new StringBuilder(tabs).append("Artifact : "+name);
         
         if(requirements.isEmpty()){
             sb.append("\n \t"+tabs+"Aucun requirement");

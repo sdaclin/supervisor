@@ -12,11 +12,14 @@ import java.util.List;
 public class Version {
     
     private transient Path path;
+    
+    private String name;
     private List<Phase> phases;
     private Requirement rootRequirement;
     
     public Version(Path p){
         path = p;
+        name = path.getFileName().toString();
         phases = new ArrayList<Phase>();
         rootRequirement = new Requirement("ROOT");
     }
@@ -35,6 +38,7 @@ public class Version {
     
     public void setPath(Path p ){
         path = p;
+        name = path.getFileName().toString();
     }
     
     public void addPhase(Phase phase){
@@ -50,7 +54,7 @@ public class Version {
         // 1337 M0D3
         String tabs = new String(new char[level]).replace("\0", "\t");
 
-        StringBuilder sb = new StringBuilder(tabs).append("Version : "+path.getFileName());
+        StringBuilder sb = new StringBuilder(tabs).append("Version : "+name);
         if(phases.isEmpty()){
             sb.append("\n \t"+tabs+"Aucune phase");
         }

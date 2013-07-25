@@ -20,6 +20,6 @@ public class SerializerTest {
         SupervisorTest superTest = new SupervisorTest(); 
         superTest.testRun();
         Project project = ProjectSerializer.loadProject("D://test_siclop.json");
-        System.out.println(project.toString());
+        System.out.println("----------------LOADED------------- \n"+project.toString());
     }
 }
