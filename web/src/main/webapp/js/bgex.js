@@ -1,4 +1,4 @@
-moduleBgex = angular.module("BgexModule",['ngResource','ui.bootstrap']);
+moduleBgex = angular.module("BgexModule",['ui.bootstrap']);
 
 /*moduleBgex.directive('requirementDisplay', ['$compile',function(TYPE_ACTION) {
         var requirement = {
@@ -24,7 +24,7 @@ moduleBgex.directive('requirementDisplay', ['$compile',function($compile) {
                 requirement:"=",
                 isCollapsed:"="
             },
-            template : "<ul collapse='isCollapsed'><li><span class=\"clickable\" ng-click='collapsed = !collapsed'>{{requirement.id}}</span><i ng-class='{true:{true:\"icon-chevron-down\", false :\"icon-chevron-up\"}[collapsed],false:\"\"}[hasChildren()]'></i></li></ul>",
+            template : "<ul ng-hide='isCollapsed'><li><span class=\"clickable\" ng-click='collapsed = !collapsed'>{{requirement.id}}</span><i ng-class='{true:{true:\"icon-chevron-down\", false :\"icon-chevron-up\"}[collapsed],false:\"\"}[hasChildren()]'></i></li></ul>",
             link: function(scopeParent, element, attrs) {   
                 
                 var scope = scopeParent.$new();      
@@ -44,7 +44,7 @@ moduleBgex.directive('requirementDisplay', ['$compile',function($compile) {
         return requirement;
     }]);
 
-moduleBgex.controller("BgexController",['$scope','$http',function($scope,$http){
+moduleBgex.controller("BgexController",['$scope',function($scope){
     
     //recuperation du json du projet
     $scope.project = supervisorData;
