@@ -45,7 +45,7 @@ public class Artifact {
     public void setRequirements(List<Requirement> requirements){
         this.requirements = requirements;
     }
-    
+     
     @Override
     public String toString(){
         return toStringTabbed(0);

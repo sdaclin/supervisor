@@ -31,7 +31,9 @@ public class Version {
     public Path getPath(){
         return path;
     }
-    
+    public String getName(){
+        return name;
+    }
     public String getVersion(){
         return path.getFileName().toString();
     }
@@ -44,7 +46,7 @@ public class Version {
     public void addPhase(Phase phase){
         phases.add(phase);
     }
-    
+      
     @Override
     public String toString(){ 
        return toStringTabbed(0);

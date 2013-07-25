@@ -76,8 +76,17 @@ public class SupervisorTest {
                 .build();
         
         
-        Project project = new Project("SUPERVISOR",projectConf);
-
+        //retrieve the former project object, if it exists
+        Project project = ProjectSerializer.loadProject("..\\web\\src\\main\\webapp\\data\\data.json.js");
+        //no project found
+        if(project == null){
+            project = new Project("SUPERVISOR",projectConf);
+        }
+        else{
+            //project already exists -> set its configuration
+            project.setConf(projectConf);
+        }
+        
         System.out.println(project.getConf());
 
         Supervisor supervisor = new Supervisor(project);
@@ -85,6 +94,6 @@ public class SupervisorTest {
         
         System.out.println(project.toString());
         //Save the project as a json file 
-        ProjectSerializer.saveProject("D://test_siclop.json",project);
+        ProjectSerializer.saveProject("..\\web\\src\\main\\webapp\\data\\data.json.js",project);
     }
 }

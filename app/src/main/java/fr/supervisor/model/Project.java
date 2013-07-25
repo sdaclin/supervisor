@@ -1,6 +1,8 @@
 package fr.supervisor.model;
 
 import fr.supervisor.model.configuration.ProjectConf;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,13 +45,47 @@ public class Project {
     public ProjectConf getConf(){
         return conf;
     }
-
-    public void addVersion(Version version, Date dateVersion){
-        Map<Date,Version> map = new HashMap<Date,Version>();
-        map.put(dateVersion, version);
-        versions.put(version.getPath().getFileName().toString(),map);
+    
+    public void setConf(ProjectConf projectConf) {
+        conf = projectConf;
     }
-
+    
+    public void addVersion(Version version, Date dateVersion) throws ParseException{
+        //retrieve the map Date->Version, index by the version name
+        Map<Date,Version> map = versions.get(version.getName());
+        
+        if(map == null){
+            //this version is not referenced yet, create the corresponding map
+            Map<Date,Version> mapDateVersion = new HashMap<Date,Version>();
+            map.put(dateVersion, version);
+            versions.put(version.getName(), mapDateVersion);
+        }else{
+            //the version is already referenced
+            //check if it has already been scanned today
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date today = new Date();
+            Date todayWithZeroTime =formatter.parse(formatter.format(today));
+            
+            if(hasVersion(version,todayWithZeroTime)){
+                //this version has already been scanned today
+                //dump the already existing version for this date
+                map.remove(todayWithZeroTime);
+            }
+            //add the version at the specified date
+            map.put(dateVersion, version);
+        }
+       
+        //TODO : enregistrer les versions a une date ne comprenant pas d'heure ->plus besoin de la comparaison avec le simpledateformat
+    }
+    
+    public boolean hasVersion(Version version, Date date) throws ParseException{
+        
+        Map<Date,Version> mapFound = versions.get(version.getName());
+        if(mapFound == null)
+            return false;
+        //now check if this version was analyzed today 
+        return mapFound.containsKey(date);    
+    }
     /*
      * Return the list of versions
      */
@@ -60,7 +96,7 @@ public class Project {
         }
         return list;
     }
-
+     
     @Override
     public String toString(){
 

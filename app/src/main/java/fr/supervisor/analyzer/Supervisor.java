@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,10 +105,10 @@ public class Supervisor {
     /*
      * Search for version directories
      */
-    public void findVersions() throws IOException{
+    public void findVersions() throws IOException, ParseException{
 
            List<Path> versionPaths =  findElements(project.getConf().getDocumentation(),project.getConf().getVersion(),project.getConf().getIgnoreFile());
-           for(Path path : versionPaths){
+           for(Path path : versionPaths){             
                Version version = new Version(path);
                project.addVersion(version,new Date());
                //find phases for the current version
@@ -192,10 +193,10 @@ public class Supervisor {
             }
 
             for(Version version : project.getVersions()){
-                logger.info("Version {} : {}",version.getPath().getFileName(),version.getRootRequirement().toString());
+                logger.info("Version {} : {}",version.getName(),version.getRootRequirement().toString());
             }
                
-        } catch (IOException ex) {
+        } catch (IOException | ParseException ex) {
             ex.printStackTrace();
         }
     }
