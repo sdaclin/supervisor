@@ -17,7 +17,7 @@ public class SVNExtractorTest {
     public void extractRequirement(){
         try {
             Requirement newRequirement = new Requirement("root");
-            for (Requirement requirement : SVNExtractor.extractRequirements(Pattern.compile("G4R9C2"/*^DM\\s*[\\d]*|^G[\\d]R*[\\d]*C*[\\d]*|^IRMA\\s*[\\d]*"*/), new URL("http://svn.tpas.astek.fr/siclop/trunk"), "sonar", "sonar", 0, -1, newRequirement)) {
+            for (Requirement requirement : SVNExtractor.extractRequirements(Pattern.compile("G4R9C2"/*^DM\\s*[\\d]*|^G[\\d]R*[\\d]*C*[\\d]*|^IRMA\\s*[\\d]*"*/), new URL("http://svn.tpas.astek.fr/siclop/"), "sonar", "sonar", 0, -1, newRequirement)) {
                 System.out.println(requirement);
             }
             System.out.println("TREE-STRUCTURE"+newRequirement);

@@ -40,6 +40,9 @@ public class SVNExtractor {
 
             // Creating artifacts for entries that match requirements
             for (SVNLogEntry log : logEntries){
+                if (log.getMessage() == null)
+                    continue;
+
                 Matcher matcher = patternRequirement.matcher(log.getMessage());
                 if (matcher.find()){
 
