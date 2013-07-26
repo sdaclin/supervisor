@@ -57,7 +57,7 @@ public class Project {
         if(map == null){
             //this version is not referenced yet, create the corresponding map
             Map<Date,Version> mapDateVersion = new HashMap<Date,Version>();
-            map.put(dateVersion, version);
+            mapDateVersion.put(dateVersion, version);
             versions.put(version.getName(), mapDateVersion);
         }else{
             //the version is already referenced

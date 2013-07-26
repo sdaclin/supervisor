@@ -81,7 +81,17 @@ public class SiclopSupervisorTest {
                 .build();
 
 
-        Project project = new Project("SUPERVISOR", projectConf);
+         //retrieve the former project object, if it exists
+        Project project = ProjectSerializer.loadProject("web/src/main/webapp/data/data.json.js");
+        //no project found
+        if(project == null){
+            project = new Project("Siclop",projectConf);
+        }
+        else{
+            //project already exists -> set its configuration
+            project.setConf(projectConf);
+        }
+        
 
         Supervisor supervisor = new Supervisor(project);
         supervisor.run();
