@@ -13,6 +13,8 @@ import javax.annotation.Nullable;
 public class PhaseConf {
   
     private String name;
+    
+    private Set<String> tags = new HashSet<>();
    
     /**
      * List of configuration matching this phase conf
@@ -34,6 +36,10 @@ public class PhaseConf {
             return this;
         }
         
+        public Builder tag(String tag){
+            conf.tags.add(tag);
+            return this;
+        }
 
         public PhaseConf build(){
             if (conf.name == null){
@@ -50,6 +56,10 @@ public class PhaseConf {
     
     public Set<ArtifactConf> getArtifactConfs(){
         return artifactConfs;
+    }
+    
+    public Set<String> getTags() {
+        return tags;
     }
     
 

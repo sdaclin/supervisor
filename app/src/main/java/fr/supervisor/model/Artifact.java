@@ -3,7 +3,9 @@ package fr.supervisor.model;
 import fr.supervisor.model.configuration.ArtifactConf;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: sdaclin
@@ -18,19 +20,23 @@ public class Artifact {
     private String name;
     private List<Requirement> requirements;
     private transient ArtifactConf conf;
+    
+    private Set<String> tags;
 
     public Artifact(Path path, ArtifactConf conf){
-        this.path = path;
+       this.path = path;
         this.name=this.path.getFileName().toString();
         this.conf = conf;
         requirements = new ArrayList<Requirement>();
+        this.tags = new HashSet<String>();
     }
+    
 
     public void setPath(Path path){
         this.path = path;
         this.name=this.path.getFileName().toString();
     }
-
+    
     public Path getPath(){
         return path;
     }
@@ -38,6 +44,15 @@ public class Artifact {
     public ArtifactConf getConf(){
         return conf;
     }
+    
+    public void addTag(String tag){
+        tags.add(tag);
+    }
+    
+    public void setTags(Set<String> tags){
+        this.tags = tags;
+    }
+    
     public void addRequirement(Requirement req){
         requirements.add(req);
     }

@@ -2,7 +2,9 @@ package fr.supervisor.model;
 
 import static com.google.common.base.Preconditions.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: sdaclin
@@ -15,13 +17,26 @@ public class Requirement {
     private List<Requirement> children;
     // TODO set nullable
     private String comment;
-
+    
+    private Set<String> tags;
+        
     public Requirement(String id){
         checkNotNull(id, "Id is mandatory");
         this.id = id;
         this.children = new ArrayList<Requirement>();
+        tags = new HashSet<String>();
     }
-
+    
+    public void addTag(String tag){
+        tags.add(tag);
+    }
+    
+    public void addAllTag(Set<String> tags){
+        this.tags.addAll(tags);
+    }
+    public void setTags(Set<String> tags){
+        this.tags = tags;
+    }
     public List<Requirement> getChildren() {
         return children;
     }

@@ -153,6 +153,10 @@ public class Supervisor {
                     //for each artifact found, create an artifact and add it to the current phase
                     for(Path artifactPath : artifactsList){
                         Artifact newArtifact = new Artifact(artifactPath,artConf);
+                        
+                        //artifacts get the same tag list as their phase
+                        newArtifact.setTags(phase.getConf().getTags());
+                        
                         phase.addArtifact(newArtifact);
                         //extract the requirements from this artifact if the pattern is set
                         if (currentConf.getRequirementPattern() != null){
@@ -160,7 +164,12 @@ public class Supervisor {
                                 logger.warn("Un pattern est défini pour trouver des Requirements dans l'artifact {} mais celui-ci n'est pas au format docx", artifactPath);
                                 continue;
                             }
-                            newArtifact.setRequirements(WordExtractor.extractRequirements(currentConf.getRequirementPattern(),currentConf.getStylePattern(), artifactPath.toFile(),version.getRootRequirement()));
+                            List<Requirement> requirements = WordExtractor.extractRequirements(currentConf.getRequirementPattern(),currentConf.getStylePattern(), artifactPath.toFile(),version.getRootRequirement());
+                             //requirements get the same tag list as their phase
+                            for(Requirement requirement : requirements){
+                               requirement.addAllTag(phase.getConf().getTags());
+                            }
+                            newArtifact.setRequirements(requirements);
                         }
                     }
                 }
@@ -170,12 +179,19 @@ public class Supervisor {
                 //the configuration indicates a SVN artifact
                 ArtifactConfSVN currentConf = (ArtifactConfSVN)artConf;
                 Artifact svnArtifact = new Artifact(Paths.get(currentConf.getUrl().getPath()),currentConf);
+                //artifacts get the same tag list as their phase
+                svnArtifact.setTags(phase.getConf().getTags());
 
                 //compute the correct pattern, including the current version
                 Pattern svnReqPattern = Pattern.compile(currentConf.getRequirementPattern().pattern().replace("(version)",version.getVersion()));
 
                 //extract requirements from the svn commit log
-                svnArtifact.setRequirements((List<Requirement>)SVNExtractor.extractRequirements(svnReqPattern, currentConf.getUrl(), currentConf.getUser(), currentConf.getPassword(), 0, -1, version.getRootRequirement()));
+                List<Requirement> requirements =(List<Requirement>)SVNExtractor.extractRequirements(svnReqPattern, currentConf.getUrl(), currentConf.getUser(), currentConf.getPassword(), 0, -1, version.getRootRequirement());
+                 //requirements get the same tag list as their phase
+                for(Requirement requirement : requirements){
+                   requirement.setTags(phase.getConf().getTags());
+                }
+                svnArtifact.setRequirements(requirements);
                 phase.addArtifact(svnArtifact);
             }
             else{

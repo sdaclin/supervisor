@@ -9,8 +9,10 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -22,6 +24,20 @@ import java.util.regex.Pattern;
  * Time: 14:58
  */
 public class WordExtractor {
+    
+    
+    
+    private static Set<String> extractTags(String requirement){
+        Set<String> tags = new HashSet<String>();
+        Matcher tagsMatcher = Pattern.compile("\\[(.*)\\]").matcher(requirement);
+        while(tagsMatcher.find()){
+            String allTags = tagsMatcher.group(1);
+           for(String tag : allTags.split("[,;+]")){
+               tags.add(tag);
+           }
+        }
+        return tags;
+    }
     /**
      * Extracts requirements from a docx file. Maintain a tree-like structure of requirements whose root element is rootRequirement
      * Attempts to find the parent requirement as well
@@ -56,7 +72,6 @@ public class WordExtractor {
                     continue;
                 }
 
-                //retrieve the requirement ID (first run block)
                 List<XWPFRun> runBlocks = curParagraph.getRuns();
                 if (runBlocks == null || runBlocks.isEmpty()) {
                     continue;
@@ -76,9 +91,17 @@ public class WordExtractor {
                 }
 
                 String requirementID = requirementMatcher.group();
-                String comment = fullRequirement.substring(requirementID.length());
+  
+                String requirementWithoutID = fullRequirement.replace(requirementID, "");
+
+                //search for tags in requirementWithoutID
+                Set<String> tags = extractTags(requirementWithoutID);
+                
+                String comment = requirementWithoutID.replaceAll("\\[.*\\]","").trim();
+
                 Requirement newRequirement = new Requirement(requirementID);
                 newRequirement.setComment(comment);
+                newRequirement.addAllTag(tags);
 
                 //get the parent requirement id, if it exists(in the next paragraph)
                 XWPFParagraph nextParagraph = it.next();

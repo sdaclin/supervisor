@@ -45,6 +45,8 @@ public class SupervisorTest {
                         .build())
                 .phase(new PhaseConf.Builder()  //phase conception
                         .name("Conception")
+                        .tag("valide")
+                        .tag("ok")
                         .artifact(new ArtifactConfFile.Builder()
                                 .directoryPattern((Pattern.compile(".*Conception.*")))
                                 .fileNamePattern(Pattern.compile("CDS-LYO-Conception-\\d*-DFD\\.docx"))
