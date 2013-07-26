@@ -30,7 +30,10 @@
 
 <div class="container main-container">
 
-    <h1> Projet {{project.name}}</h1>
+    <h1> Projet {{project.name}} 
+        <span class="btn btn-primary pull-right" ng-click="startDiff()">Diff</span>
+    </h1>
+    
 
     <div ng-repeat="(versionName,mapDateVersion) in project.versions">
         <h3 class="clickable" ng-init="isCollapsedVersion = true" ng-click="isCollapsedVersion = !isCollapsedVersion">
@@ -52,7 +55,10 @@
                     <ul collapse="isCollapsedArtifact">
                         <li ng-repeat="artifact in phase.artifacts">
                             <h6 class="clickable" ng-init="isCollapsedRequirement = true"
-                                ng-click="isCollapsedRequirement = !isCollapsedRequirement">{{artifact.name}}</h6>
+                                ng-click="isCollapsedRequirement = !isCollapsedRequirement">{{artifact.name}} 
+                                <span class="label label-info" style="margin-left : 10px;" ng-repeat="tag in artifact.tags">{{tag}}</span>
+                            </h6>
+
                             <requirement-display ng-repeat="child in artifact.requirements"
                                                  is-collapsed="isCollapsedRequirement"
                                                  requirement="child"></requirement-display>
