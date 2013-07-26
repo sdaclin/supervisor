@@ -1,57 +1,67 @@
 <!doctype html>
 <html ng-app="BgexModule">
-    <head>
-        <meta charset="UTF-8">
-        <title>Supervisor</title>
-        <link rel="stylesheet" href="css/bgex.css" />
-        <link rel="stylesheet" href="css/bootstrap.css" />
-        <script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/angular.min.js"></script>
-        <script type="text/javascript" src="js/angular-resource.min.js"></script>
-        <script type="text/javascript" src="js/ui-bootstrap-tpls-0.4.0.js"></script>
-        <script type="text/javascript" src="js/bgex.js"></script>
-        <script type="text/javascript" src="data/data.json.js"></script>
-    </head>
-    <body ng-controller="BgexController">
-        
-        <div class="navbar navbar-inverse">
-        <div class="navbar-inner" style="vertical-align : middle;">
-            <div class="container">
-                <a class="brand">BGEX</a>
-            </div>
-        </div>
-        </div>
-        
-        <div class="container main-container">
+<head>
+    <meta charset="UTF-8">
+    <title>Supervisor</title>
+    <link rel="stylesheet" href="css/bgex.css"/>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/angular-resource.min.js"></script>
+    <script type="text/javascript" src="js/ui-bootstrap-tpls-0.4.0.js"></script>
+    <script type="text/javascript" src="js/bgex.js"></script>
+    <script type="text/javascript" src="data/data.json.js"></script>
 
-            <h1> Projet {{project.name}}</h1>
-            <div>
-                <ul>
-                    <li ng-repeat="(versionName,mapDateVersion) in project.versions">       
-                        <h3 class="clickable" ng-init="isCollapsedVersion = true"  ng-click="isCollapsedVersion = !isCollapsedVersion">{{versionName}}</h3>     
-                        <ul collapse="isCollapsedVersion">                        
-                            <li ng-repeat="(date,version) in mapDateVersion"> 
-                                <h4 class="clickable" ng-init="isCollapsedPhase = true"  ng-click="isCollapsedPhase = !isCollapsedPhase">{{date}}</h4>
-                                <ul collapse="isCollapsedPhase"> 
-                                    <li ng-repeat="phase in version.phases">
-                                        <h5 class="clickable" ng-init="isCollapsedArtifact = true"  ng-click="isCollapsedArtifact = !isCollapsedArtifact">{{phase.name}}</h5>
-                                        <ul collapse="isCollapsedArtifact">
-                                            <li ng-repeat="artifact in phase.artifacts">
-                                                <h6 class="clickable" ng-init="isCollapsedRequirement = true"  ng-click="isCollapsedRequirement = !isCollapsedRequirement">{{artifact.name}}</h6> 
-                                                <requirement-display ng-repeat="child in artifact.requirements" is-collapsed="isCollapsedRequirement" requirement="child"></requirement-display>
-                                            </li>
-                                        </ul>
-                                    </li>   
-                                    <li>
-                                        <h5 class="clickable" ng-init="isCollapsedMatrice = true"  ng-click="isCollapsedMatrice = !isCollapsedMatrice"><i><strong>Matrice</strong></i></h5>
-                                        <requirement-display ng-repeat="child in version.rootRequirement.children" is-collapsed="isCollapsedMatrice" requirement="child"></requirement-display>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>  
-    </body>
+    <style type="text/css">
+        h3 {
+            border-bottom: 1px solid #000000;
+        }
+    </style>
+</head>
+<body ng-controller="BgexController">
+
+<div class="navbar navbar-inverse">
+    <div class="navbar-inner" style="vertical-align : middle;">
+        <div class="container">
+            <a class="brand">Supervisor</a>
+        </div>
+    </div>
+</div>
+
+<div class="container main-container">
+
+    <h1> Projet {{project.name}}</h1>
+
+    <div ng-repeat="(versionName,mapDateVersion) in project.versions">
+        <h3 class="clickable" ng-init="isCollapsedVersion = true" ng-click="isCollapsedVersion = !isCollapsedVersion">
+            {{versionName}}</h3>
+
+        <div ng-repeat="(date,version) in mapDateVersion">
+            <h4 class="clickable" ng-init="isCollapsedPhase = true" ng-click="isCollapsedPhase = !isCollapsedPhase">
+                {{date}}</h4>
+            <ul collapse="isCollapsedPhase">
+                <li>
+                    <h5 class="clickable" ng-init="isCollapsedMatrice = true"
+                        ng-click="isCollapsedMatrice = !isCollapsedMatrice"><i><strong>Matrice</strong></i></h5>
+                    <requirement-display ng-repeat="child in version.rootRequirement.children"
+                                         is-collapsed="isCollapsedMatrice" requirement="child"></requirement-display>
+                </li>
+                <li ng-repeat="phase in version.phases">
+                    <h5 class="clickable" ng-init="isCollapsedArtifact = true"
+                        ng-click="isCollapsedArtifact = !isCollapsedArtifact">{{phase.name}}</h5>
+                    <ul collapse="isCollapsedArtifact">
+                        <li ng-repeat="artifact in phase.artifacts">
+                            <h6 class="clickable" ng-init="isCollapsedRequirement = true"
+                                ng-click="isCollapsedRequirement = !isCollapsedRequirement">{{artifact.name}}</h6>
+                            <requirement-display ng-repeat="child in artifact.requirements"
+                                                 is-collapsed="isCollapsedRequirement"
+                                                 requirement="child"></requirement-display>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
 </html>

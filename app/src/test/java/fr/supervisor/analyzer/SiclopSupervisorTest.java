@@ -6,6 +6,7 @@ import fr.supervisor.model.configuration.ArtifactConfSVN;
 import fr.supervisor.model.configuration.PhaseConf;
 import fr.supervisor.model.configuration.ProjectConf;
 import org.junit.Test;
+import serializer.ProjectSerializer;
 
 import java.net.URL;
 import java.nio.file.Paths;
@@ -23,12 +24,14 @@ public class SiclopSupervisorTest {
                 .path(Paths.get("C:\\bgex\\siclop"))
                 .svn(new URL("http://svn.tpas.astek.fr/siclop/trunk"))
                 .version(Pattern.compile("(G[\\d]+)(R[\\d]+)*(C[\\d]+)*.*"))
-                .ignore(Pattern.compile("archive|validé|envoyé"))
+                .ignore(Pattern.compile("archive|validé|envoyé|old"))
                 .phase(new PhaseConf.Builder()
                         .name("Fournitures client")
                         .artifact(new ArtifactConfFile.Builder()
                                 .directoryPattern(Pattern.compile(".*Fournitures.*"))
                                 .fileNamePattern(Pattern.compile(".*PS.*\\.doc[x]*"))
+                                .requirementPattern(Pattern.compile("IDEA [\\d]+"))
+                                .stylePattern(Pattern.compile("Titre[\\d]*"))
                                 .build())
                         .build())
                 .phase(new PhaseConf.Builder()
@@ -43,7 +46,7 @@ public class SiclopSupervisorTest {
                         .artifact(new ArtifactConfFile.Builder()
                                 .directoryPattern(Pattern.compile(".*Conception.*"))
                                 .fileNamePattern(Pattern.compile("CDS-[\\d]*-[\\d]*-.*-DFD\\.docx"))
-                                .requirementPattern(Pattern.compile("ES-FT-SICLOP[-\\w\\d]*"))
+                                .requirementPattern(Pattern.compile("ES-FT-SICLOP[-\\w]*[\\d]+"))
                                 .stylePattern(Pattern.compile("[Tt].*[\\d]"))
                                 .build())
                         .build())
@@ -52,7 +55,7 @@ public class SiclopSupervisorTest {
                         .artifact(new ArtifactConfFile.Builder()
                                 .directoryPattern(Pattern.compile(".*Conception.*"))
                                 .fileNamePattern(Pattern.compile("CDS-[\\d]*-[\\d]*-.*-DFD\\.docx"))
-                                .requirementPattern(Pattern.compile("EC-FT-SICLOP[-\\w\\d]*"))
+                                .requirementPattern(Pattern.compile("EC-FT-SICLOP[-\\w]*[\\d]+"))
                                 .stylePattern(Pattern.compile("[Tt].*[\\d]"))
                                 .build())
                         .build())
@@ -70,7 +73,7 @@ public class SiclopSupervisorTest {
                         .artifact(new ArtifactConfFile.Builder()
                                 .directoryPattern(Pattern.compile(".*Tests.*"))
                                 .fileNamePattern(Pattern.compile("CDS-[\\d]*-[\\d]*-.*-PDT\\.docx"))
-                                .requirementPattern(Pattern.compile("PTV-FT-SICLOP-.*"))
+                                .requirementPattern(Pattern.compile("PTV-FT-SICLOP-[GRC\\d]+-[\\d]+"))
                                 .stylePattern(Pattern.compile("ASTEK[\\w]*-[\\w]*[Tt].*[\\d]*"))
                                 .build())
                         .build())
@@ -80,11 +83,12 @@ public class SiclopSupervisorTest {
 
         Project project = new Project("SUPERVISOR", projectConf);
 
-        System.out.println(project.getConf());
-
         Supervisor supervisor = new Supervisor(project);
         supervisor.run();
 
         System.out.println(project.toString());
+
+        //Save the project as a json file
+        ProjectSerializer.saveProject("web/src/main/webapp/data/data.json.js", project);
     }
 }

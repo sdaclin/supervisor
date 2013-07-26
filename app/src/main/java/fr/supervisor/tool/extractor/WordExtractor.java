@@ -41,6 +41,9 @@ public class WordExtractor {
             if (requirementPattern == null)
                 throw new IllegalArgumentException("Le pattern de requirement est obligatoire");
 
+            if (! file.getName().endsWith(".docx"))
+                throw new IllegalArgumentException("Impossible d'extraire des requirements dans un fichier qui n'est pas au format docx");
+
             final XWPFDocument document = new XWPFDocument(new FileInputStream(file));
             Iterator<XWPFParagraph> it = document.getParagraphsIterator();
             XWPFParagraph curParagraph;
