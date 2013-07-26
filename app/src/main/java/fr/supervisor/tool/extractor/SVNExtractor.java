@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,7 +48,10 @@ public class SVNExtractor {
                 if (matcher.find()){
 
                     Requirement requirement = new Requirement(""+log.getRevision());
-                    StringBuilder comment = new StringBuilder(log.getMessage());
+                    Set<String> tags  = TagExtractor.extractTags(log.getMessage()); 
+                    
+                    //discard the tags if any
+                    StringBuilder comment = new StringBuilder(log.getMessage().replaceAll("\\[.*\\]", ""));
 
                     // List of changedPath for this commit
                     for (Object logEntry : log.getChangedPaths().values()){

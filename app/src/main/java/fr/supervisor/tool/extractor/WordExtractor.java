@@ -23,21 +23,9 @@ import java.util.regex.Pattern;
  * Date: 20/07/13
  * Time: 14:58
  */
-public class WordExtractor {
+public class WordExtractor{
     
-    
-    
-    private static Set<String> extractTags(String requirement){
-        Set<String> tags = new HashSet<String>();
-        Matcher tagsMatcher = Pattern.compile("\\[(.*)\\]").matcher(requirement);
-        while(tagsMatcher.find()){
-            String allTags = tagsMatcher.group(1);
-           for(String tag : allTags.split("[,;+]")){
-               tags.add(tag);
-           }
-        }
-        return tags;
-    }
+ 
     /**
      * Extracts requirements from a docx file. Maintain a tree-like structure of requirements whose root element is rootRequirement
      * Attempts to find the parent requirement as well
@@ -95,8 +83,9 @@ public class WordExtractor {
                 String requirementWithoutID = fullRequirement.replace(requirementID, "");
 
                 //search for tags in requirementWithoutID
-                Set<String> tags = extractTags(requirementWithoutID);
+                Set<String> tags = TagExtractor.extractTags(requirementWithoutID);
                 
+                //comment without the requirement id and nor the tags
                 String comment = requirementWithoutID.replaceAll("\\[.*\\]","").trim();
 
                 Requirement newRequirement = new Requirement(requirementID);
@@ -125,7 +114,10 @@ public class WordExtractor {
                 if (!hasParent) {
                     rootRequirement.addChild(newRequirement);
                 }
-
+                //search for tags in fullParentParagraph
+                tags = TagExtractor.extractTags(fullParentParagraph);
+                newRequirement.addAllTag(tags);
+                
                 listRequirements.add(newRequirement);
             }
 

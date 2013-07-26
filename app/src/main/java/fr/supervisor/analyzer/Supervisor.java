@@ -189,7 +189,7 @@ public class Supervisor {
                 List<Requirement> requirements =(List<Requirement>)SVNExtractor.extractRequirements(svnReqPattern, currentConf.getUrl(), currentConf.getUser(), currentConf.getPassword(), 0, -1, version.getRootRequirement());
                  //requirements get the same tag list as their phase
                 for(Requirement requirement : requirements){
-                   requirement.setTags(phase.getConf().getTags());
+                   requirement.addAllTag(phase.getConf().getTags());
                 }
                 svnArtifact.setRequirements(requirements);
                 phase.addArtifact(svnArtifact);
