@@ -24,16 +24,16 @@ moduleBgex.directive('requirementDisplay', ['$compile',function($compile) {
                 requirement:"=",
                 isCollapsed:"="
             },
-            template : "<ul ng-hide='isCollapsed'><li><span class=\"clickable\" ng-click='collapsed = !collapsed'>{{requirement.id}}</span><i ng-class='{true:{true:\"icon-chevron-down\", false :\"icon-chevron-up\"}[collapsed],false:\"\"}[hasChildren()]'></i></li></ul>",
-            link: function(scopeParent, element, attrs) {   
-                
-                var scope = scopeParent.$new();      
+            template : "<ul ng-hide='isCollapsed'><li><i ng-class='{true:{true:\"icon-folder-close\", false :\"icon-folder-open\"}[collapsed],false:\"\"}[hasChildren()]'></i>&nbsp;&nbsp;<span class=\"clickable\" ng-click='collapsed = !collapsed'>{{requirement.id}}</span><br ng-show=\"requirement.comment\"/><pre>{{ requirement.comment }}</pre></li></ul>",
+            link: function(scopeParent, element, attrs) {
+
+                var scope = scopeParent.$new();
                 scope.collapsed = true;
-                
+
                 scope.hasChildren = function(){
                     return angular.isArray(scope.requirement.children) && scope.requirement.children.length > 0;
                 }
-                
+
                 if(scope.hasChildren()){
                     angular.element(element.children()[0]).append("<requirement-display requirement='child' is-collapsed='collapsed' ng-repeat='child in requirement.children'></requirement-display>")
                     $compile(element.contents())(scope);
@@ -45,9 +45,9 @@ moduleBgex.directive('requirementDisplay', ['$compile',function($compile) {
     }]);
 
 moduleBgex.controller("BgexController",['$scope',function($scope){
-    
+
     //recuperation du json du projet
     $scope.project = supervisorData;
-  
+
     $scope.titre = "BGEX";
 }]);

@@ -40,11 +40,20 @@ public class SVNExtractor {
 
             // Creating artifacts for entries that match requirements
             for (SVNLogEntry log : logEntries){
+                if (log.getMessage() == null)
+                    continue;
+
                 Matcher matcher = patternRequirement.matcher(log.getMessage());
                 if (matcher.find()){
 
                     Requirement requirement = new Requirement(""+log.getRevision());
-                    requirement.setComment(log.getMessage()+"\n"+log.getChangedPaths().toString());
+                    StringBuilder comment = new StringBuilder(log.getMessage());
+
+                    // List of changedPath for this commit
+                    for (Object logEntry : log.getChangedPaths().values()){
+                        comment.append("\n\t").append(logEntry);
+                    }
+                    requirement.setComment(comment.toString());
 
                     Requirement parent = rootRequirement.findById(matcher.group(0).trim());
                     if(parent != null){
