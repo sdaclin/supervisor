@@ -24,7 +24,7 @@ moduleBgex.directive('requirementDisplay', ['$compile',function($compile) {
                 requirement:"=",
                 isCollapsed:"="
             },
-            template : "<ul ng-hide='isCollapsed'><li><i ng-class='{true:{true:\"icon-plus-sign\", false :\"icon-minus-sign\"}[collapsed],false:\"\"}[hasChildren()]'></i>&nbsp;&nbsp;<span class=\"clickable\" ng-click='collapsed = !collapsed'>{{requirement.id}}</span><br ng-show=\"requirement.comment\"/><pre>{{ requirement.comment }}</pre></li></ul>",
+            template : "<ul ng-hide='isCollapsed'><li><i ng-class='{true:{true:\"icon-folder-close\", false :\"icon-folder-open\"}[collapsed],false:\"\"}[hasChildren()]'></i>&nbsp;&nbsp;<span class=\"clickable\" ng-click='collapsed = !collapsed'>{{requirement.id}}</span><br ng-show=\"requirement.comment\"/><pre>{{ requirement.comment }}</pre></li></ul>",
             link: function(scopeParent, element, attrs) {
 
                 var scope = scopeParent.$new();
