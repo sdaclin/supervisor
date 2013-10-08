@@ -1,9 +1,26 @@
 body{
     background-color: #f5f5f5;
 }
+
+ h3 {
+    border-bottom: 1px solid #000000;
+}
 .clickable{
    cursor :  pointer;
 }
 .main-container {
     width : 1100px;
+}
+
+.added {
+    color : #00A002;
+}
+
+.removed {
+   color : #D80F0B;
+   text-decoration: line-through;
+}
+
+.modified {
+    color : #FC7C18;
 }

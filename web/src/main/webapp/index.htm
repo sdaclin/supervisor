@@ -1,73 +1,99 @@
 <!doctype html>
 <html ng-app="BgexModule">
-<head>
-    <meta charset="UTF-8">
-    <title>Supervisor</title>
-    <link rel="stylesheet" href="css/bgex.css"/>
-    <link rel="stylesheet" href="css/bootstrap.css"/>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/angular.min.js"></script>
-    <script type="text/javascript" src="js/angular-resource.min.js"></script>
-    <script type="text/javascript" src="js/ui-bootstrap-tpls-0.4.0.js"></script>
-    <script type="text/javascript" src="js/bgex.js"></script>
-    <script type="text/javascript" src="data/data.json.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <title>Supervisor</title>
+        <link rel="stylesheet" href="css/bgex.css"/>
+        <link rel="stylesheet" href="css/bootstrap.css"/>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ui-bootstrap-tpls-0.4.0.js"></script>
+        <script type="text/javascript" src="js/bgex.js"></script>
+        <script type="text/javascript" src="data/data.json.js"></script>
 
-    <style type="text/css">
-        h3 {
-            border-bottom: 1px solid #000000;
-        }
-    </style>
-</head>
-<body ng-controller="BgexController">
+    </head>
+    <body ng-controller="BgexController" rick-roll>
 
-<div class="navbar navbar-inverse">
-    <div class="navbar-inner" style="vertical-align : middle;">
-        <div class="container">
-            <a class="brand">Supervisor</a>
+        <div class="navbar navbar-inverse">
+            <div class="navbar-inner" style="vertical-align : middle;">
+                <div class="container">
+                    <a class="brand">Supervisor</a>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<div class="container main-container">
+        <div class="container main-container">
 
-    <h1> Projet {{project.name}} 
-        <span class="btn btn-primary pull-right" ng-click="startDiff()">Diff</span>
-    </h1>
-    
+            <h1> Projet {{project.name}}</h1>
 
-    <div ng-repeat="(versionName,mapDateVersion) in project.versions">
-        <h3 class="clickable" ng-init="isCollapsedVersion = true" ng-click="isCollapsedVersion = !isCollapsedVersion">
-            {{versionName}}</h3>
 
-        <div ng-repeat="(date,version) in mapDateVersion">
-            <h4 class="clickable" ng-init="isCollapsedPhase = true" ng-click="isCollapsedPhase = !isCollapsedPhase">
-                {{date}}</h4>
-            <ul collapse="isCollapsedPhase">
-                <li>
-                    <h5 class="clickable" ng-init="isCollapsedMatrice = true"
-                        ng-click="isCollapsedMatrice = !isCollapsedMatrice"><i><strong>Matrice</strong></i></h5>
-                    <requirement-display ng-repeat="child in version.rootRequirement.children"
-                                         is-collapsed="isCollapsedMatrice" requirement="child"></requirement-display>
-                </li>
-                <li ng-repeat="phase in version.phases">
-                    <h5 class="clickable" ng-init="isCollapsedArtifact = true"
-                        ng-click="isCollapsedArtifact = !isCollapsedArtifact">{{phase.name}}</h5>
-                    <ul collapse="isCollapsedArtifact">
-                        <li ng-repeat="artifact in phase.artifacts">
-                            <h6 class="clickable" ng-init="isCollapsedRequirement = true"
-                                ng-click="isCollapsedRequirement = !isCollapsedRequirement">{{artifact.name}} 
-                                <span class="label label-info" style="margin-left : 10px;" ng-repeat="tag in artifact.tags">{{tag}}</span>
-                            </h6>
+            <div ng-repeat="(versionName,mapDateVersion) in project.versions">
 
-                            <requirement-display ng-repeat="child in artifact.requirements"
-                                                 is-collapsed="isCollapsedRequirement"
-                                                 requirement="child"></requirement-display>
+                <span class="btn btn-primary pull-right" ng-click="startStopDiff(versionName)" ng-model="diffPressed" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">Diff</span>
+                <h3 class="clickable" ng-init="isCollapsedVersion = true" ng-click="isCollapsedVersion = !isCollapsedVersion">
+                    {{versionName}}</h3>
+
+                <div ng-repeat="(date,version) in mapDateVersion">
+                    <input type="checkbox" class="pull-left" ng-show="isDiffActive(versionName)" ng-model="osef" ng-change="setUnsetDate(date,version,versionName)"/>
+                    <h4 class="clickable" ng-init="isCollapsedPhase = true" ng-click="isCollapsedPhase = !isCollapsedPhase">
+                        {{date}}</h4>
+                    <ul collapse="isCollapsedPhase">
+                        <li>
+                            <h5 class="clickable" ng-init="isCollapsedMatrice = true"
+                                ng-click="isCollapsedMatrice = !isCollapsedMatrice"><i><strong>Matrice</strong></i></h5>
+                            <requirement-display ng-repeat="child in version.rootRequirement.children"
+                                             is-collapsed="isCollapsedMatrice" requirement="child"></requirement-display>
+                        </li>
+                        <li ng-repeat="phase in version.phases">
+                            <h5 class="clickable" ng-init="isCollapsedArtifact = true"
+                                ng-click="isCollapsedArtifact = !isCollapsedArtifact">{{phase.name}}</h5>
+                            <ul collapse="isCollapsedArtifact">
+                                <li ng-repeat="artifact in phase.artifacts">
+                                    <h6 class="clickable" ng-init="isCollapsedRequirement = true"
+                                        ng-click="isCollapsedRequirement = !isCollapsedRequirement">{{artifact.name}} 
+                                        <span class="label label-info" style="margin-left : 10px;" ng-repeat="tag in artifact.tags">{{tag}}</span>
+                                    </h6>
+
+                                <requirement-display ng-repeat="child in artifact.requirements"
+                                                     is-collapsed="isCollapsedRequirement"
+                                                     requirement="child"></requirement-display>
                         </li>
                     </ul>
-                </li>
-            </ul>
+                    </li>    
+                    </ul>
+                </div>   
+
+                <!-- Affichage du diff -->
+                <div ng-show="diffs[versionName].diff && isDiffActive(versionName)">
+                    <h4 class="clickable" ng-init="isCollapsedDiff = false" ng-click="isCollapsedDiff = !isCollapsedDiff">Différence</h4>
+                    <ul collapse="isCollapsedDiff">
+                        <li ng-repeat="phase in diffs[versionName].diff.phases">
+                            <h5 diff-color="phase.state" class="clickable" ng-init="isCollapsedPhase = true"
+                                ng-click="isCollapsedPhase = !isCollapsedPhase">{{phase.name}}</h5>
+                            <ul collapse="isCollapsedPhase">
+                                <li ng-repeat="artifact in phase.artifacts">
+                                    <h6 diff-color="artifact.state" class="clickable" ng-init="isCollapsedRequirement = true"
+                                        ng-click="isCollapsedRequirement = !isCollapsedRequirement">{{artifact.name}} 
+                                        <span class="label label-info" style="margin-left : 10px;" ng-repeat="tag in artifact.tags">{{tag}}</span>
+                                    </h6>
+
+                                    <requirement-display ng-repeat="child in artifact.requirements"
+                                                         is-collapsed="isCollapsedRequirement"
+                                                         requirement="child"></requirement-display>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h5 class="clickable" ng-init="isCollapsedMatrice = true"
+                            ng-click="isCollapsedMatrice = !isCollapsedMatrice"><i><strong>Matrice</strong></i></h5>
+                            <requirement-display ng-repeat="child in diffs[versionName].diff.rootRequirement.children"
+                                             is-collapsed="isCollapsedMatrice" requirement="child"></requirement-display>
+                        </li>
+                    </ul>
+                    
+                </div>
+
+            </div>
         </div>
-    </div>
-</div>
-</body>
+    </body>
 </html>
